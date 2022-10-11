@@ -1,0 +1,38 @@
+---
+title: "Oppgaver til 1 seminar + arbeidsbok"
+output:
+  html_document: default
+  word_document: default
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+install.packages(tidyverse)
+library("tidyverse")
+library("ggplot2")
+
+```
+
+##Oppgave 1 
+
+Det inneholder 15 variabler og 1816 observasjoner. 
+
+Jeg har ikke klart å løse oppgave 2 og 3, da det har vært litt kluss med programmet. Jeg har ellers jobbet med oppgaver i arbeidsboken under arbeidsbok/modul 6. 
+
+
+```{r earnings}
+summary(earnings)
+data(earnings)
+
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
