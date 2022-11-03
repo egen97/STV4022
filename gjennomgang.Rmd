@@ -1,0 +1,83 @@
+
+---
+title: "Seminar 1"
+author: "Eric"
+date: "03.11.2022"
+output: 
+    pdf_document: 
+      keep_md: yes
+    github_document:
+    fig_width: 5
+    fig_height: 5
+    dev: jpeg
+  
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Siste seminar
+
+
+![](meme/emx.png)
+
+## Seminar 1: Laste inn og endre data
+
+![](meme/real_world_data.jpg)
+
+I løpet av seminaret har vi brukt to metoder for å laste inn data. I starten datasett som allerede var i R, eller i en pakke, og senere gjennom å laste ned datasettene og bruke forskjellige read_* funksjoner. 
+
+```{r, eval= FALSE, message=FALSE, warning=FALSE}
+library(rosdata) #Laste inn pakken som gir data fra pensumboken
+library(tidyverse)
+
+earnings <- earnings
+
+mineData <- read.csv("mittDatasett.csv")
+
+data("mtcars")
+
+```
+
+
+Herifra kommer jeg til å bruke mtcars datasettet, ofte brukt som eksempel er det ferdig lasta inn i R fra før. Det er også det jeg har brukt som eksempel i seminarene :) Første vi gjorde på seminar 1 var å undersøke datasettet, lage nye variabler, og lage noen grafer. 
+
+```{r, message=FALSE, warning=FALSE}
+mtcars #Ved å bare skrive navnet får jeg se et utdrag av datasettet
+
+mtcars %>% 
+  ggplot(aes(disp, mpg, label = rownames(mtcars))) +
+  geom_point(colour = "red", size = .5) +
+  geom_smooth(method = "lm") +
+  geom_text(position = "dodge") +
+  ggthemes::theme_economist_white() +
+  labs(y = "Miles pr. gallon", x = "Displacement")
+
+
+mtcars <- mtcars %>% 
+  mutate(big_car = ifelse(disp > mean(disp), 1, 0))
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

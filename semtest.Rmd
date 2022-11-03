@@ -1,0 +1,61 @@
+---
+title: "Untitled"
+author: "Eric G. E. Nilsen"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(rstanarm) #Fjerna install.packages(rstanarm)
+library(tidyverse) #Måtte legge til denne
+
+lijphart <- read.csv("Oppgaver/lijphart.csv")
+```
+
+
+```{r}
+## 1)
+lijphart %>%
+  ggplot(aes(federal_unitry_1981_2010,pop_in_thousands_2009,))+
+  geom_point()
+##2)
+pop_2009<-lijphart$pop_in_thousands_2009
+hist(pop_2009)
+
+## 3)
+lijphart$logpop_in_thousands_2009<-log(lijphart$pop_in_thousands_2009)
+
+lijphart %>%
+  ggplot(aes(federal_unitry_1981_2010,lijphart$logpop_in_thousands_2009,))+
+  geom_point()
+
+hist(lijphart$logpop_in_thousands_2009)
+```
+
+
+
+
+
+```{r}
+mod1<-stan_glm(federal_unitry_1981_2010 ~ log(pop_in_thousands_2009), data=lijphart, refresh=0)
+summary(mod1)
+
+##2)
+mod2<-stan_glm(federal_unitry_1981_2010 ~ plural_society_code, data=lijphart, refresh=0)
+summary(mod2)
+
+##3)
+mod3<-stan_glm(federal_unitry_1981_2010 ~ plural_society_code + log(pop_in_thousands_2009), data=lijphart, refresh=0)
+summary(mod3)
+
+##4)
+mod4<-stan_glm(federal_unitry_1981_2010 ~ plural_society_code * log(pop_in_thousands_2009), data=lijphart, refresh=0)
+summary(mod4)
+```
+
+
+
