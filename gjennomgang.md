@@ -99,7 +99,7 @@ mtcars <- mtcars %>%
   mutate(big_car = ifelse(disp > mean(disp), 1, 0))
 ```
 
-
+![](meme/first.png)
 
 
 
@@ -138,7 +138,7 @@ sd(output)
 ```
 
 ```
-## [1] 1.053058
+## [1] 1.048867
 ```
 
 ```r
@@ -146,7 +146,7 @@ mean(output)
 ```
 
 ```
-## [1] 20.0919
+## [1] 20.09473
 ```
 
 ```r
@@ -170,6 +170,8 @@ ggplot(as_tibble(output), aes(value)) +
 
 ![](gjennomgang_files/figure-latex/unnamed-chunk-3-1.pdf)<!-- --> 
 
+![](meme/sec.png)
+
 
 ## Regresjonsmodeller! :O
 ![](meme/reg.jpg)
@@ -190,39 +192,33 @@ mod3 <- stan_glm(mpg ~ hp + disp + gear, data = mtcars, refresh = 0)
 
 models <- list(mod1, mod2, mod3)
 
-modelsummary(models, statistic = "mad", title = "Linær regresjon, mpg som avhengig")
+modelsummary(models, statistic = "mad", title = "Linær regresjon, mpg som avhengig", output = "markdown")
 ```
 
-\begin{table}
 
-\caption{\label{tab:unnamed-chunk-4}Linær regresjon, mpg som avhengig}
-\centering
-\begin{tabular}[t]{lccc}
-\toprule
-  & Model 1 & Model 2 & Model 3\\
-\midrule
-(Intercept) & \num{30.067} & \num{30.703} & \num{23.089}\\
- & (\num{1.711}) & (\num{1.316}) & (\num{4.894})\\
-hp & \num{-0.068} & \num{-0.025} & \num{-0.042}\\
- & (\num{0.010}) & (\num{0.013}) & (\num{0.017})\\
-disp &  & \num{-0.030} & \num{-0.017}\\
- &  & (\num{0.008}) & (\num{0.011})\\
-gear &  &  & \num{1.888}\\
- &  &  & (\num{1.143})\\
-\midrule
-Num.Obs. & \num{32} & \num{32} & \num{32}\\
-R2 & \num{0.583} & \num{0.730} & \num{0.749}\\
-R2 Adj. & \num{0.536} & \num{0.708} & \num{0.725}\\
-Log.Lik. & \num{-88.419} & \num{-81.349} & \num{-80.226}\\
-ELPD & \num{-91.5} & \num{-84.3} & \num{-83.9}\\
-ELPD s.e. & \num{4.5} & \num{3.6} & \num{3.8}\\
-LOOIC & \num{183.0} & \num{168.7} & \num{167.7}\\
-LOOIC s.e. & \num{9.0} & \num{7.2} & \num{7.5}\\
-WAIC & \num{182.8} & \num{168.5} & \num{167.4}\\
-RMSE & \num{3.74} & \num{2.98} & \num{2.84}\\
-\bottomrule
-\end{tabular}
-\end{table}
+
+Table: Linær regresjon, mpg som avhengig
+
+|            | Model 1 | Model 2 | Model 3 |
+|:-----------|:-------:|:-------:|:-------:|
+|(Intercept) | 30.069  | 30.713  | 23.346  |
+|            | (1.631) | (1.344) | (4.863) |
+|hp          | -0.068  | -0.025  | -0.041  |
+|            | (0.010) | (0.014) | (0.017) |
+|disp        |         | -0.030  | -0.017  |
+|            |         | (0.008) | (0.011) |
+|gear        |         |         |  1.835  |
+|            |         |         | (1.112) |
+|Num.Obs.    |   32    |   32    |   32    |
+|R2          |  0.584  |  0.730  |  0.750  |
+|R2 Adj.     |  0.546  |  0.705  |  0.727  |
+|Log.Lik.    | -88.381 | -81.340 | -80.194 |
+|ELPD        |  -91.3  |  -84.4  |  -83.8  |
+|ELPD s.e.   |   4.5   |   3.6   |   3.8   |
+|LOOIC       |  182.7  |  168.7  |  167.6  |
+|LOOIC s.e.  |   9.0   |   7.1   |   7.5   |
+|WAIC        |  182.4  |  168.5  |  167.4  |
+|RMSE        |  3.74   |  2.98   |  2.84   |
 
 Tre modeller, med coeffisienten (median), og MAD_SD (i parantes under) i tabellen.Vi kan se at hestekrefter (hp) generelt fører til en lavere drivstoffeffektivitet, men dette virker ikke å være signifikant (standardavviket er nesten like stor som koeffisienten.) Når vi legger til flere variabler forandrer den seg veldig lite mellom modellene. Displacement, altså størrelse, ser også ut til å ha en negativ effekt, men er også signifikant her. Det kan dermed virke som det har mer å si for drivstoffeffektiviteten enn hestekrefter alene. 
 
@@ -249,10 +245,10 @@ print(logit1)
 ##  predictors:   4
 ## ------
 ##             Median MAD_SD
-## (Intercept) -4.9    6.6  
+## (Intercept) -4.7    6.4  
 ## hp           0.0    0.0  
 ## disp         0.0    0.0  
-## gear        -2.0    1.7  
+## gear        -2.1    1.6  
 ## 
 ## ------
 ## * For help interpreting the printed output see ?print.stanreg

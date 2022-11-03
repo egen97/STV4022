@@ -65,7 +65,7 @@ mtcars <- mtcars %>%
 
 ```
 
-
+![](meme/first.png)
 
 
 
@@ -123,6 +123,8 @@ ggplot(as_tibble(output), aes(value)) +
 
 ```
 
+![](meme/sec.png)
+
 
 ## Regresjonsmodeller! :O
 ![](meme/reg.jpg)
@@ -142,7 +144,7 @@ mod3 <- stan_glm(mpg ~ hp + disp + gear, data = mtcars, refresh = 0)
 
 models <- list(mod1, mod2, mod3)
 
-modelsummary(models, statistic = "mad", title = "Linær regresjon, mpg som avhengig")
+modelsummary(models, statistic = "mad", title = "Linær regresjon, mpg som avhengig", output = "markdown")
 
 ```
 
