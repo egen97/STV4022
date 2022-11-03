@@ -92,16 +92,12 @@ mtcars %>%
   labs(y = "Miles pr. gallon", x = "Displacement")
 ```
 
-```
-## `geom_smooth()` using formula 'y ~ x'
-```
-
-```
-## Warning: Width not defined. Set with `position_dodge(width = ?)`
-```
-
 ![](gjennomgang_files/figure-latex/unnamed-chunk-2-1.pdf)<!-- --> 
 
+```r
+mtcars <- mtcars %>% 
+  mutate(big_car = ifelse(disp > mean(disp), 1, 0))
+```
 
 
 
@@ -110,8 +106,158 @@ mtcars %>%
 
 
 
+## Standardfeil, bootstraping, og mer stress
+
+Standardavviket er et mål på spredning, og viser dermed hvor *forskjellige* enhetene i datasettet vårt er. Et større standardavvik vil dermed bety at enhetene oftest er lenger fra gjennomsnittet enn om standardavviket er mindre. 
+
+Det er særlig tre ulike standardavvik som er relevante for oss: 
+(1) Standardavviket i populasjonen (typisk ukjent)
+(2) Standardavviket i utvalget (kjent)
+(3) Standardavviket for utvalgsfordelingen til estimatoren vi bruker – også kalt standardfeil. Denne kan vi komme frem til på en rekke ulike måter (analytisk, via bootstrapping, eller Bayesianske Monte Carlo simuleringer – som vi gjør vi via rstanarm). 
+
+Nr 3. gjør vi i R som oftest bare ved å bruke 'sd()' på variabelen vi er interesert i, eller at det kommer som et resultat av noe annen kode (f.eks. en regresjonsanalyse). Vi kan også gjøre det gjennom bootstrapping, sånn som under.
 
 
+
+```r
+#Lager en funksjon som henter ut tilfeldige rader, og regner ut gjennomsnittet av en variabel
+
+bootfun <- function(data){
+  n <- length(data)
+  boot <- sample(n, replace = TRUE) #Sample with replacement 
+  boot_mean <- mean(data[boot])
+  return(boot_mean)
+  
+}
+
+n_sims <- 10000
+output <- replicate(n_sims, bootfun(mtcars$mpg))
+
+# Den bootstrappede standardfeilen og gjennomsnittet er:
+sd(output)
+```
+
+```
+## [1] 1.053058
+```
+
+```r
+mean(output)
+```
+
+```
+## [1] 20.0919
+```
+
+```r
+ggplot(as_tibble(output), aes(value)) +
+  geom_density(colour = "black", fill = "#56B4E9") +
+  scale_x_continuous(name = "mean miles pr. gallon",
+                           breaks = seq(0, 20, 25),
+                           limits=c(16, 25)) +
+        scale_y_continuous(name = "Density") +
+        ggtitle("Density plot of the bootstraped mean miles pr. gallon") +
+        theme(axis.line = element_line(size=1, colour = "black"),
+              panel.grid.major = element_blank(),
+              panel.grid.minor = element_blank(),
+              panel.border = element_blank(),
+              panel.background = element_blank(),
+              plot.title=element_text(size = 20),
+              text=element_text(size = 16),
+              axis.text.x=element_text(colour="black", size = 12),
+              axis.text.y=element_text(colour="black", size = 12))
+```
+
+![](gjennomgang_files/figure-latex/unnamed-chunk-3-1.pdf)<!-- --> 
+
+
+## Regresjonsmodeller! :O
+![](meme/reg.jpg)
+
+
+
+
+
+```r
+library(rstanarm)
+library(modelsummary)
+#Alle regresjonsmodellene vi kjører følger det samme mønsteret, modellfunksjonen (i.e. stan_glm), og så en formel ala Y ~ X, evt. Y ~ X1 + X2 + X3 + X1:X2....
+
+
+mod1 <- stan_glm(mpg ~ hp, data = mtcars, refresh = 0)
+mod2 <- stan_glm(mpg ~ hp + disp, data = mtcars, refresh = 0)
+mod3 <- stan_glm(mpg ~ hp + disp + gear, data = mtcars, refresh = 0)
+
+models <- list(mod1, mod2, mod3)
+
+modelsummary(models, statistic = "mad", title = "Linær regresjon, mpg som avhengig")
+```
+
+\begin{table}
+
+\caption{\label{tab:unnamed-chunk-4}Linær regresjon, mpg som avhengig}
+\centering
+\begin{tabular}[t]{lccc}
+\toprule
+  & Model 1 & Model 2 & Model 3\\
+\midrule
+(Intercept) & \num{30.067} & \num{30.703} & \num{23.089}\\
+ & (\num{1.711}) & (\num{1.316}) & (\num{4.894})\\
+hp & \num{-0.068} & \num{-0.025} & \num{-0.042}\\
+ & (\num{0.010}) & (\num{0.013}) & (\num{0.017})\\
+disp &  & \num{-0.030} & \num{-0.017}\\
+ &  & (\num{0.008}) & (\num{0.011})\\
+gear &  &  & \num{1.888}\\
+ &  &  & (\num{1.143})\\
+\midrule
+Num.Obs. & \num{32} & \num{32} & \num{32}\\
+R2 & \num{0.583} & \num{0.730} & \num{0.749}\\
+R2 Adj. & \num{0.536} & \num{0.708} & \num{0.725}\\
+Log.Lik. & \num{-88.419} & \num{-81.349} & \num{-80.226}\\
+ELPD & \num{-91.5} & \num{-84.3} & \num{-83.9}\\
+ELPD s.e. & \num{4.5} & \num{3.6} & \num{3.8}\\
+LOOIC & \num{183.0} & \num{168.7} & \num{167.7}\\
+LOOIC s.e. & \num{9.0} & \num{7.2} & \num{7.5}\\
+WAIC & \num{182.8} & \num{168.5} & \num{167.4}\\
+RMSE & \num{3.74} & \num{2.98} & \num{2.84}\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Tre modeller, med coeffisienten (median), og MAD_SD (i parantes under) i tabellen.Vi kan se at hestekrefter (hp) generelt fører til en lavere drivstoffeffektivitet, men dette virker ikke å være signifikant (standardavviket er nesten like stor som koeffisienten.) Når vi legger til flere variabler forandrer den seg veldig lite mellom modellene. Displacement, altså størrelse, ser også ut til å ha en negativ effekt, men er også signifikant her. Det kan dermed virke som det har mer å si for drivstoffeffektiviteten enn hestekrefter alene. 
+
+
+
+
+
+
+For å gjøre en logistisk regresjon bruker vi pretty much akkurat den samme koden!
+
+
+```r
+logit1 <- stan_glm(big_car ~ hp + disp + gear, 
+                   family = binomial(link = "logit"), 
+                   data = mtcars, refresh = 0)
+print(logit1)
+```
+
+```
+## stan_glm
+##  family:       binomial [logit]
+##  formula:      big_car ~ hp + disp + gear
+##  observations: 32
+##  predictors:   4
+## ------
+##             Median MAD_SD
+## (Intercept) -4.9    6.6  
+## hp           0.0    0.0  
+## disp         0.0    0.0  
+## gear        -2.0    1.7  
+## 
+## ------
+## * For help interpreting the printed output see ?print.stanreg
+## * For info on the priors used see ?prior_summary.stanreg
+```
 
 
 
