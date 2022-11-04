@@ -36,6 +36,11 @@ earnings <- earnings
 mineData <- read.csv("mittDatasett.csv")
 
 data("mtcars")
+
+mtcars_filtered <- mtcars %>% 
+  filter(big_car == 1 | gear > 2)
+
+table(mtcars$carb == "")
 ```
 
 
@@ -138,7 +143,7 @@ sd(output)
 ```
 
 ```
-## [1] 1.048867
+## [1] 1.030362
 ```
 
 ```r
@@ -146,7 +151,7 @@ mean(output)
 ```
 
 ```
-## [1] 20.09473
+## [1] 20.08678
 ```
 
 ```r
@@ -201,23 +206,23 @@ Table: Linær regresjon, mpg som avhengig
 
 |            | Model 1 | Model 2 | Model 3 |
 |:-----------|:-------:|:-------:|:-------:|
-|(Intercept) | 30.069  | 30.713  | 23.346  |
-|            | (1.631) | (1.344) | (4.863) |
-|hp          | -0.068  | -0.025  | -0.041  |
+|(Intercept) | 30.030  | 30.764  | 23.251  |
+|            | (1.626) | (1.348) | (4.707) |
+|hp          | -0.068  | -0.025  | -0.042  |
 |            | (0.010) | (0.014) | (0.017) |
 |disp        |         | -0.030  | -0.017  |
 |            |         | (0.008) | (0.011) |
-|gear        |         |         |  1.835  |
-|            |         |         | (1.112) |
+|gear        |         |         |  1.859  |
+|            |         |         | (1.152) |
 |Num.Obs.    |   32    |   32    |   32    |
-|R2          |  0.584  |  0.730  |  0.750  |
-|R2 Adj.     |  0.546  |  0.705  |  0.727  |
-|Log.Lik.    | -88.381 | -81.340 | -80.194 |
-|ELPD        |  -91.3  |  -84.4  |  -83.8  |
-|ELPD s.e.   |   4.5   |   3.6   |   3.8   |
-|LOOIC       |  182.7  |  168.7  |  167.6  |
-|LOOIC s.e.  |   9.0   |   7.1   |   7.5   |
-|WAIC        |  182.4  |  168.5  |  167.4  |
+|R2          |  0.588  |  0.732  |  0.748  |
+|R2 Adj.     |  0.542  |  0.703  |  0.721  |
+|Log.Lik.    | -88.378 | -81.300 | -80.224 |
+|ELPD        |  -91.4  |  -84.6  |  -84.0  |
+|ELPD s.e.   |   4.5   |   3.7   |   3.8   |
+|LOOIC       |  182.8  |  169.1  |  168.1  |
+|LOOIC s.e.  |   9.1   |   7.3   |   7.6   |
+|WAIC        |  182.5  |  168.9  |  167.8  |
 |RMSE        |  3.74   |  2.98   |  2.84   |
 
 Tre modeller, med coeffisienten (median), og MAD_SD (i parantes under) i tabellen.Vi kan se at hestekrefter (hp) generelt fører til en lavere drivstoffeffektivitet, men dette virker ikke å være signifikant (standardavviket er nesten like stor som koeffisienten.) Når vi legger til flere variabler forandrer den seg veldig lite mellom modellene. Displacement, altså størrelse, ser også ut til å ha en negativ effekt, men er også signifikant her. Det kan dermed virke som det har mer å si for drivstoffeffektiviteten enn hestekrefter alene. 
@@ -245,10 +250,10 @@ print(logit1)
 ##  predictors:   4
 ## ------
 ##             Median MAD_SD
-## (Intercept) -4.7    6.4  
+## (Intercept) -5.1    6.7  
 ## hp           0.0    0.0  
 ## disp         0.0    0.0  
-## gear        -2.1    1.6  
+## gear        -2.1    1.7  
 ## 
 ## ------
 ## * For help interpreting the printed output see ?print.stanreg
@@ -256,8 +261,45 @@ print(logit1)
 ```
 
 
+Å tolke en logistisk regresjon er litt annerledes enn OLS modellene over. Koeffisientene vi får ut her er på en log-odds skala, som har lite substansiell mening. Det meste vi kan få ut av denne er at "gear" (som et eksempel) har en negativ verdi, men ikke er signifikant (standardavviket/MAD_SD gjør at koefisienten krysser null). Vi kan også se at verdien på den er større enn f.eks. disp, så effekten (hadde den vært signifikant) ville vært sterkere. 
+
+Et annet problem er at effekten av en variabel $x_i$ er avhengig av verdien på *alle de andre variablene.* Altså vil effekten av hestekrefter på om bilen er stor være forskjellig når bilen har 2 eller 4 gir. For å tolke modellen regner vi derfor ut marginaleffekten av en variabel, når alle de andre er holdt konstant på en eller annen verdi. Som oftest holder vi de andre på et mål for sentraltendens, f.eks. gjennomsnitt eller median, eller noe annet passende. Så lar vi variabelen vi ønsker å se effekten av variere, dette kaller vi ofte ett scenario. 
 
 
+
+```r
+scenario <- data.frame(
+  hp = seq(min(mtcars$hp), max(mtcars$hp)), # Lar antall hestekrefter variere fra minimum til maksimum observert
+                       disp = mean(mtcars$disp), #Setter størrelsen på motoren og antal gir på gj.snitt/median
+                       gear = median(mtcars$gear)
+  )
+
+predikert_utfall <- function(model, scenario){ #Denne lager et datasett som har prediksjonene
+  preds <- posterior_epred(model,              # og et konfidensinterval
+                           newdata = scenario)
+  preds_oppsummert <- apply(preds, 
+                            2, FUN = quantile, 
+                            probs = c(0.025, 0.5, 0.975))
+  out <- as.data.frame(t(preds_oppsummert))
+  return(out)
+}
+
+prediksjoner <- predikert_utfall(logit1, scenario)
+
+prediksjoner$hp <- seq(min(mtcars$hp), max(mtcars$hp))
+
+ggplot(prediksjoner, 
+       aes(x = hp, 
+           ymin = `2.5%`, 
+           y = `50%`, 
+           ymax = `97.5%`))+
+  geom_ribbon(alpha = 0.3, fill = "steelblue")+
+  geom_line()+
+  labs(y = "Predikert sannsynlighet", title = "Effekten av hestekrefter på sansyneligheten for at bilen er stor", caption = "Legg merke til at effekten ikke er signifikant, og standardavviket er enormt")+
+  theme_classic()
+```
+
+![](meme/predProb.png)
 
 
 
