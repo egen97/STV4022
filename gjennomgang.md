@@ -143,7 +143,7 @@ sd(output)
 ```
 
 ```
-## [1] 1.030362
+## [1] 1.050086
 ```
 
 ```r
@@ -151,7 +151,7 @@ mean(output)
 ```
 
 ```
-## [1] 20.08678
+## [1] 20.09137
 ```
 
 ```r
@@ -206,23 +206,23 @@ Table: Linær regresjon, mpg som avhengig
 
 |            | Model 1 | Model 2 | Model 3 |
 |:-----------|:-------:|:-------:|:-------:|
-|(Intercept) | 30.030  | 30.764  | 23.251  |
-|            | (1.626) | (1.348) | (4.707) |
-|hp          | -0.068  | -0.025  | -0.042  |
+|(Intercept) | 30.083  | 30.706  | 23.208  |
+|            | (1.673) | (1.346) | (4.835) |
+|hp          | -0.068  | -0.025  | -0.041  |
 |            | (0.010) | (0.014) | (0.017) |
 |disp        |         | -0.030  | -0.017  |
-|            |         | (0.008) | (0.011) |
-|gear        |         |         |  1.859  |
-|            |         |         | (1.152) |
+|            |         | (0.007) | (0.011) |
+|gear        |         |         |  1.875  |
+|            |         |         | (1.155) |
 |Num.Obs.    |   32    |   32    |   32    |
-|R2          |  0.588  |  0.732  |  0.748  |
-|R2 Adj.     |  0.542  |  0.703  |  0.721  |
-|Log.Lik.    | -88.378 | -81.300 | -80.224 |
-|ELPD        |  -91.4  |  -84.6  |  -84.0  |
-|ELPD s.e.   |   4.5   |   3.7   |   3.8   |
-|LOOIC       |  182.8  |  169.1  |  168.1  |
-|LOOIC s.e.  |   9.1   |   7.3   |   7.6   |
-|WAIC        |  182.5  |  168.9  |  167.8  |
+|R2          |  0.587  |  0.731  |  0.747  |
+|R2 Adj.     |  0.536  |  0.701  |  0.727  |
+|Log.Lik.    | -88.363 | -81.360 | -80.204 |
+|ELPD        |  -91.5  |  -84.5  |  -83.7  |
+|ELPD s.e.   |   4.5   |   3.6   |   3.7   |
+|LOOIC       |  182.9  |  168.9  |  167.5  |
+|LOOIC s.e.  |   9.1   |   7.2   |   7.4   |
+|WAIC        |  182.5  |  168.6  |  167.2  |
 |RMSE        |  3.74   |  2.98   |  2.84   |
 
 Tre modeller, med coeffisienten (median), og MAD_SD (i parantes under) i tabellen.Vi kan se at hestekrefter (hp) generelt fører til en lavere drivstoffeffektivitet, men dette virker ikke å være signifikant (standardavviket er nesten like stor som koeffisienten.) Når vi legger til flere variabler forandrer den seg veldig lite mellom modellene. Displacement, altså størrelse, ser også ut til å ha en negativ effekt, men er også signifikant her. Det kan dermed virke som det har mer å si for drivstoffeffektiviteten enn hestekrefter alene. 
@@ -250,7 +250,7 @@ print(logit1)
 ##  predictors:   4
 ## ------
 ##             Median MAD_SD
-## (Intercept) -5.1    6.7  
+## (Intercept) -4.9    6.5  
 ## hp           0.0    0.0  
 ## disp         0.0    0.0  
 ## gear        -2.1    1.7  
@@ -302,6 +302,46 @@ ggplot(prediksjoner,
 ![](meme/predProb.png)
 
 
+### Interaksjonseffekter
 
+Interaksjonseffekter, eller samspillseffekter, eller samspillsledd (kjært barn har mange navn..) brukes når vi tror at effekten av en variabel avhenger av verdien på en annen. Et eksempel kan være om vi mener at hvor stor effekten antall gir har på drivstoffeffektivitet vil avhengig av om det er en v- eller rekkemotor. For å undersøke dette kan vi se på regresjonsmodellen vi har over, og legge til et samspill mellom *hp* og *vs* (hvor 1 på siste betyr rekkemotor, og 0 v-motor).
+
+
+```r
+mod4 <- stan_glm(mpg ~ hp + disp + gear + am + gear*am, data = mtcars, refresh = 0)
+print(mod4)
+```
+
+```
+## stan_glm
+##  family:       gaussian [identity]
+##  formula:      mpg ~ hp + disp + gear + am + gear * am
+##  observations: 32
+##  predictors:   6
+## ------
+##             Median MAD_SD
+## (Intercept) 30.7    7.5  
+## hp           0.0    0.0  
+## disp         0.0    0.0  
+## gear        -0.6    2.0  
+## am          -4.2   10.6  
+## gear:am      2.0    2.7  
+## 
+## Auxiliary parameter(s):
+##       Median MAD_SD
+## sigma 2.9    0.4   
+## 
+## ------
+## * For help interpreting the printed output see ?print.stanreg
+## * For info on the priors used see ?prior_summary.stanreg
+```
+Her kan vi se at vi har fått en koeffisient for hver av variablene, pluss $gear:am$ som viser samspillsleddet. Når vi nå skal tolke effekten av antall gir, må vi se den sammen med dette leddet. For en bil med rekkemottor vil effekten av antall gir da bli: 
+
+
+$Y=gear+gear:am + X +e \ = + \ Y = -0,7+2.1(-0.7*1) + X + e $ altså at effekten av gear er -2.17.
+For en V motor må du istedet gange -0.7 med 0. Dette kan ofte være lettere å se med en graf: 
+
+
+![](meme/interaksjon.png)
 
 

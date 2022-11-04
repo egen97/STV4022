@@ -214,6 +214,22 @@ ggplot(prediksjoner,
 ![](meme/predProb.png)
 
 
+### Interaksjonseffekter
 
+Interaksjonseffekter, eller samspillseffekter, eller samspillsledd (kjært barn har mange navn..) brukes når vi tror at effekten av en variabel avhenger av verdien på en annen. Et eksempel kan være om vi mener at hvor stor effekten antall gir har på drivstoffeffektivitet vil avhengig av om det er en v- eller rekkemotor. For å undersøke dette kan vi se på regresjonsmodellen vi har over, og legge til et samspill mellom *hp* og *vs* (hvor 1 på siste betyr rekkemotor, og 0 v-motor).
+
+```{r}
+
+mod4 <- stan_glm(mpg ~ hp + disp + gear + am + gear*am, data = mtcars, refresh = 0)
+print(mod4)
+```
+Her kan vi se at vi har fått en koeffisient for hver av variablene, pluss $gear:am$ som viser samspillsleddet. Når vi nå skal tolke effekten av antall gir, må vi se den sammen med dette leddet. For en bil med rekkemottor vil effekten av antall gir da bli: 
+
+
+$Y=gear+gear:am + X +e \ = + \ Y = -0,7+2.1(-0.7*1) + X + e $ altså at effekten av gear er -2.17.
+For en V motor må du istedet gange -0.7 med 0. Dette kan ofte være lettere å se med en graf: 
+
+
+![](meme/interaksjon.png)
 
 
