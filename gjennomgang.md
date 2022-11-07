@@ -1,4 +1,3 @@
-
 ---
 title: "Seminar 1"
 author: "Eric"
@@ -10,13 +9,11 @@ output:
     fig_width: 5
     fig_height: 5
     dev: jpeg
-  
 ---
 
 
 
 # Siste seminar
-
 
 ![](meme/emx.png)
 
@@ -24,7 +21,7 @@ output:
 
 ![](meme/real_world_data.jpg)
 
-I løpet av seminaret har vi brukt to metoder for å laste inn data. I starten datasett som allerede var i R, eller i en pakke, og senere gjennom å laste ned datasettene og bruke forskjellige read_* funksjoner. 
+I løpet av seminaret har vi brukt to metoder for å laste inn data. I starten datasett som allerede var i R, eller i en pakke, og senere gjennom å laste ned datasettene og bruke forskjellige read\_\* funksjoner.
 
 
 ```r
@@ -43,8 +40,7 @@ mtcars_filtered <- mtcars %>%
 table(mtcars$carb == "")
 ```
 
-
-Herifra kommer jeg til å bruke mtcars datasettet, ofte brukt som eksempel er det ferdig lasta inn i R fra før. Det er også det jeg har brukt som eksempel i seminarene :) Første vi gjorde på seminar 1 var å undersøke datasettet, lage nye variabler, og lage noen grafer. 
+Herifra kommer jeg til å bruke mtcars datasettet, ofte brukt som eksempel er det ferdig lasta inn i R fra før. Det er også det jeg har brukt som eksempel i seminarene :) Første vi gjorde på seminar 1 var å undersøke datasettet, lage nye variabler, og lage noen grafer.
 
 
 ```r
@@ -106,22 +102,19 @@ mtcars <- mtcars %>%
 
 ![](meme/first.png)
 
-
-
-
-
-
 ## Standardfeil, bootstraping, og mer stress
 
-Standardavviket er et mål på spredning, og viser dermed hvor *forskjellige* enhetene i datasettet vårt er. Et større standardavvik vil dermed bety at enhetene oftest er lenger fra gjennomsnittet enn om standardavviket er mindre. 
+Standardavviket er et mål på spredning, og viser dermed hvor *forskjellige* enhetene i datasettet vårt er. Et større standardavvik vil dermed bety at enhetene oftest er lenger fra gjennomsnittet enn om standardavviket er mindre.
 
-Det er særlig tre ulike standardavvik som er relevante for oss: 
-(1) Standardavviket i populasjonen (typisk ukjent)
-(2) Standardavviket i utvalget (kjent)
-(3) Standardavviket for utvalgsfordelingen til estimatoren vi bruker – også kalt standardfeil. Denne kan vi komme frem til på en rekke ulike måter (analytisk, via bootstrapping, eller Bayesianske Monte Carlo simuleringer – som vi gjør vi via rstanarm). 
+Det er særlig tre ulike standardavvik som er relevante for oss:
+
+\(1\) Standardavviket i populasjonen (typisk ukjent)
+
+\(2\) Standardavviket i utvalget (kjent)
+
+\(3\) Standardavviket for utvalgsfordelingen til estimatoren vi bruker – også kalt standardfeil. Denne kan vi komme frem til på en rekke ulike måter (analytisk, via bootstrapping, eller Bayesianske Monte Carlo simuleringer – som vi gjør vi via rstanarm).
 
 Nr 3. gjør vi i R som oftest bare ved å bruke 'sd()' på variabelen vi er interesert i, eller at det kommer som et resultat av noe annen kode (f.eks. en regresjonsanalyse). Vi kan også gjøre det gjennom bootstrapping, sånn som under.
-
 
 
 ```r
@@ -143,7 +136,7 @@ sd(output)
 ```
 
 ```
-## [1] 1.050086
+## [1] 1.055698
 ```
 
 ```r
@@ -151,7 +144,7 @@ mean(output)
 ```
 
 ```
-## [1] 20.09137
+## [1] 20.09582
 ```
 
 ```r
@@ -177,12 +170,9 @@ ggplot(as_tibble(output), aes(value)) +
 
 ![](meme/sec.png)
 
-
 ## Regresjonsmodeller! :O
+
 ![](meme/reg.jpg)
-
-
-
 
 
 ```r
@@ -206,31 +196,26 @@ Table: Linær regresjon, mpg som avhengig
 
 |            | Model 1 | Model 2 | Model 3 |
 |:-----------|:-------:|:-------:|:-------:|
-|(Intercept) | 30.083  | 30.706  | 23.208  |
-|            | (1.673) | (1.346) | (4.835) |
-|hp          | -0.068  | -0.025  | -0.041  |
+|(Intercept) | 30.059  | 30.728  | 22.975  |
+|            | (1.665) | (1.344) | (5.030) |
+|hp          | -0.068  | -0.025  | -0.042  |
 |            | (0.010) | (0.014) | (0.017) |
-|disp        |         | -0.030  | -0.017  |
-|            |         | (0.007) | (0.011) |
-|gear        |         |         |  1.875  |
-|            |         |         | (1.155) |
+|disp        |         | -0.030  | -0.016  |
+|            |         | (0.008) | (0.011) |
+|gear        |         |         |  1.941  |
+|            |         |         | (1.211) |
 |Num.Obs.    |   32    |   32    |   32    |
-|R2          |  0.587  |  0.731  |  0.747  |
-|R2 Adj.     |  0.536  |  0.701  |  0.727  |
-|Log.Lik.    | -88.363 | -81.360 | -80.204 |
-|ELPD        |  -91.5  |  -84.5  |  -83.7  |
-|ELPD s.e.   |   4.5   |   3.6   |   3.7   |
-|LOOIC       |  182.9  |  168.9  |  167.5  |
-|LOOIC s.e.  |   9.1   |   7.2   |   7.4   |
-|WAIC        |  182.5  |  168.6  |  167.2  |
-|RMSE        |  3.74   |  2.98   |  2.84   |
+|R2          |  0.583  |  0.729  |  0.750  |
+|R2 Adj.     |  0.542  |  0.702  |  0.721  |
+|Log.Lik.    | -88.390 | -81.353 | -80.260 |
+|ELPD        |  -91.4  |  -84.5  |  -84.2  |
+|ELPD s.e.   |   4.5   |   3.6   |   3.9   |
+|LOOIC       |  182.9  |  169.1  |  168.3  |
+|LOOIC s.e.  |   9.0   |   7.3   |   7.9   |
+|WAIC        |  182.5  |  168.8  |  167.9  |
+|RMSE        |  3.74   |  2.98   |  2.85   |
 
-Tre modeller, med coeffisienten (median), og MAD_SD (i parantes under) i tabellen.Vi kan se at hestekrefter (hp) generelt fører til en lavere drivstoffeffektivitet, men dette virker ikke å være signifikant (standardavviket er nesten like stor som koeffisienten.) Når vi legger til flere variabler forandrer den seg veldig lite mellom modellene. Displacement, altså størrelse, ser også ut til å ha en negativ effekt, men er også signifikant her. Det kan dermed virke som det har mer å si for drivstoffeffektiviteten enn hestekrefter alene. 
-
-
-
-
-
+Tre modeller, med coeffisienten (median), og MAD_SD (i parantes under) i tabellen.Vi kan se at hestekrefter (hp) generelt fører til en lavere drivstoffeffektivitet, men dette virker ikke å være signifikant (standardavviket er nesten like stor som koeffisienten.) Når vi legger til flere variabler forandrer den seg veldig lite mellom modellene. Displacement, altså størrelse, ser også ut til å ha en negativ effekt, men er også signifikant her. Det kan dermed virke som det har mer å si for drivstoffeffektiviteten enn hestekrefter alene.
 
 For å gjøre en logistisk regresjon bruker vi pretty much akkurat den samme koden!
 
@@ -250,7 +235,7 @@ print(logit1)
 ##  predictors:   4
 ## ------
 ##             Median MAD_SD
-## (Intercept) -4.9    6.5  
+## (Intercept) -4.7    6.6  
 ## hp           0.0    0.0  
 ## disp         0.0    0.0  
 ## gear        -2.1    1.7  
@@ -260,11 +245,9 @@ print(logit1)
 ## * For info on the priors used see ?prior_summary.stanreg
 ```
 
+Å tolke en logistisk regresjon er litt annerledes enn OLS modellene over. Koeffisientene vi får ut her er på en log-odds skala, som har lite substansiell mening. Det meste vi kan få ut av denne er at "gear" (som et eksempel) har en negativ verdi, men ikke er signifikant (standardavviket/MAD_SD gjør at koefisienten krysser null). Vi kan også se at verdien på den er større enn f.eks. disp, så effekten (hadde den vært signifikant) ville vært sterkere.
 
-Å tolke en logistisk regresjon er litt annerledes enn OLS modellene over. Koeffisientene vi får ut her er på en log-odds skala, som har lite substansiell mening. Det meste vi kan få ut av denne er at "gear" (som et eksempel) har en negativ verdi, men ikke er signifikant (standardavviket/MAD_SD gjør at koefisienten krysser null). Vi kan også se at verdien på den er større enn f.eks. disp, så effekten (hadde den vært signifikant) ville vært sterkere. 
-
-Et annet problem er at effekten av en variabel $x_i$ er avhengig av verdien på *alle de andre variablene.* Altså vil effekten av hestekrefter på om bilen er stor være forskjellig når bilen har 2 eller 4 gir. For å tolke modellen regner vi derfor ut marginaleffekten av en variabel, når alle de andre er holdt konstant på en eller annen verdi. Som oftest holder vi de andre på et mål for sentraltendens, f.eks. gjennomsnitt eller median, eller noe annet passende. Så lar vi variabelen vi ønsker å se effekten av variere, dette kaller vi ofte ett scenario. 
-
+Et annet problem er at effekten av en variabel $x_i$ er avhengig av verdien på *alle de andre variablene.* Altså vil effekten av hestekrefter på om bilen er stor være forskjellig når bilen har 2 eller 4 gir. For å tolke modellen regner vi derfor ut marginaleffekten av en variabel, når alle de andre er holdt konstant på en eller annen verdi. Som oftest holder vi de andre på et mål for sentraltendens, f.eks. gjennomsnitt eller median, eller noe annet passende. Så lar vi variabelen vi ønsker å se effekten av variere, dette kaller vi ofte ett scenario.
 
 
 ```r
@@ -301,7 +284,6 @@ ggplot(prediksjoner,
 
 ![](meme/predProb.png)
 
-
 ### Interaksjonseffekter
 
 Interaksjonseffekter, eller samspillseffekter, eller samspillsledd (kjært barn har mange navn..) brukes når vi tror at effekten av en variabel avhenger av verdien på en annen. Et eksempel kan være om vi mener at hvor stor effekten antall gir har på drivstoffeffektivitet vil avhengig av om det er en v- eller rekkemotor. For å undersøke dette kan vi se på regresjonsmodellen vi har over, og legge til et samspill mellom *hp* og *vs* (hvor 1 på siste betyr rekkemotor, og 0 v-motor).
@@ -320,28 +302,31 @@ print(mod4)
 ##  predictors:   6
 ## ------
 ##             Median MAD_SD
-## (Intercept) 30.7    7.5  
+## (Intercept) 30.8    7.0  
 ## hp           0.0    0.0  
 ## disp         0.0    0.0  
-## gear        -0.6    2.0  
-## am          -4.2   10.6  
+## gear        -0.7    1.8  
+## am          -4.5   10.5  
 ## gear:am      2.0    2.7  
 ## 
 ## Auxiliary parameter(s):
 ##       Median MAD_SD
-## sigma 2.9    0.4   
+## sigma 3.0    0.4   
 ## 
 ## ------
 ## * For help interpreting the printed output see ?print.stanreg
 ## * For info on the priors used see ?prior_summary.stanreg
 ```
-Her kan vi se at vi har fått en koeffisient for hver av variablene, pluss $gear:am$ som viser samspillsleddet. Når vi nå skal tolke effekten av antall gir, må vi se den sammen med dette leddet. For en bil med rekkemottor vil effekten av antall gir da bli: 
+
+Her kan vi se at vi har fått en koeffisient for hver av variablene, pluss $gear:am$ som viser samspillsleddet. Når vi nå skal tolke effekten av antall gir, må vi se den sammen med dette leddet. For en bil med rekkemottor vil effekten av antall gir da bli:
 
 
-$Y=gear+gear:am + X +e \ = + \ Y = -0,7+2.1(-0.7*1) + X + e $ altså at effekten av gear er -2.17.
-For en V motor må du istedet gange -0.7 med 0. Dette kan ofte være lettere å se med en graf: 
+```math
 
+Y=gear+gear:am + X +e = + Y = -0,6+2.1(-0.6*1) + X + e
+
+```
+
+altså at effekten av gear er -2.17. For en V motor må du istedet gange -0.6 med 0. Dette kan ofte være lettere å se med en graf:
 
 ![](meme/interaksjon.png)
-
-
