@@ -136,7 +136,7 @@ sd(output)
 ```
 
 ```
-## [1] 1.055698
+## [1] 1.05281
 ```
 
 ```r
@@ -144,7 +144,7 @@ mean(output)
 ```
 
 ```
-## [1] 20.09582
+## [1] 20.08962
 ```
 
 ```r
@@ -191,29 +191,47 @@ modelsummary(models, statistic = "mad", title = "Linær regresjon, mpg som avhen
 ```
 
 
+```
+## Warning: 
+## `modelsummary` uses the `performance` package to extract goodness-of-fit
+## statistics from models of this class. You can specify the statistics you wish
+## to compute by supplying a `metrics` argument to `modelsummary`, which will then
+## push it forward to `performance`. Acceptable values are: "all", "common",
+## "none", or a character vector of metrics names. For example: `modelsummary(mod,
+## metrics = c("RMSE", "R2")` Note that some metrics are computationally
+## expensive. See `?performance::performance` for details.
+##  This warning appears once per session.
+```
+
+```
+## Warning in !is.null(rmarkdown::metadata$output) && rmarkdown::metadata$output
+## %in% : 'length(x) = 5 > 1' in coercion to 'logical(1)'
+```
+
+
 
 Table: Linær regresjon, mpg som avhengig
 
 |            | Model 1 | Model 2 | Model 3 |
 |:-----------|:-------:|:-------:|:-------:|
-|(Intercept) | 30.059  | 30.728  | 22.975  |
-|            | (1.665) | (1.344) | (5.030) |
-|hp          | -0.068  | -0.025  | -0.042  |
-|            | (0.010) | (0.014) | (0.017) |
-|disp        |         | -0.030  | -0.016  |
-|            |         | (0.008) | (0.011) |
-|gear        |         |         |  1.941  |
-|            |         |         | (1.211) |
+|(Intercept) | 30.106  | 30.758  | 23.271  |
+|            | (1.675) | (1.350) | (4.925) |
+|hp          | -0.068  | -0.025  | -0.041  |
+|            | (0.011) | (0.014) | (0.017) |
+|disp        |         | -0.030  | -0.017  |
+|            |         | (0.007) | (0.011) |
+|gear        |         |         |  1.853  |
+|            |         |         | (1.177) |
 |Num.Obs.    |   32    |   32    |   32    |
-|R2          |  0.583  |  0.729  |  0.750  |
-|R2 Adj.     |  0.542  |  0.702  |  0.721  |
-|Log.Lik.    | -88.390 | -81.353 | -80.260 |
-|ELPD        |  -91.4  |  -84.5  |  -84.2  |
-|ELPD s.e.   |   4.5   |   3.6   |   3.9   |
-|LOOIC       |  182.9  |  169.1  |  168.3  |
-|LOOIC s.e.  |   9.0   |   7.3   |   7.9   |
-|WAIC        |  182.5  |  168.8  |  167.9  |
-|RMSE        |  3.74   |  2.98   |  2.85   |
+|R2          |  0.588  |  0.729  |  0.747  |
+|R2 Adj.     |  0.543  |  0.703  |  0.724  |
+|Log.Lik.    | -88.348 | -81.335 | -80.209 |
+|ELPD        |  -91.2  |  -84.4  |  -83.9  |
+|ELPD s.e.   |   4.4   |   3.6   |   3.8   |
+|LOOIC       |  182.4  |  168.9  |  167.8  |
+|LOOIC s.e.  |   8.9   |   7.1   |   7.6   |
+|WAIC        |  182.2  |  168.7  |  167.6  |
+|RMSE        |  3.74   |  2.98   |  2.84   |
 
 Tre modeller, med coeffisienten (median), og MAD_SD (i parantes under) i tabellen.Vi kan se at hestekrefter (hp) generelt fører til en lavere drivstoffeffektivitet, men dette virker ikke å være signifikant (standardavviket er nesten like stor som koeffisienten.) Når vi legger til flere variabler forandrer den seg veldig lite mellom modellene. Displacement, altså størrelse, ser også ut til å ha en negativ effekt, men er også signifikant her. Det kan dermed virke som det har mer å si for drivstoffeffektiviteten enn hestekrefter alene.
 
@@ -235,7 +253,7 @@ print(logit1)
 ##  predictors:   4
 ## ------
 ##             Median MAD_SD
-## (Intercept) -4.7    6.6  
+## (Intercept) -4.9    6.9  
 ## hp           0.0    0.0  
 ## disp         0.0    0.0  
 ## gear        -2.1    1.7  
@@ -294,7 +312,9 @@ mod4 <- stan_glm(mpg ~ hp + disp + gear + am + gear*am, data = mtcars, refresh =
 print(mod4)
 ```
 
+
 ```
+## [[1]]
 ## stan_glm
 ##  family:       gaussian [identity]
 ##  formula:      mpg ~ hp + disp + gear + am + gear * am
@@ -302,12 +322,12 @@ print(mod4)
 ##  predictors:   6
 ## ------
 ##             Median MAD_SD
-## (Intercept) 30.8    7.0  
+## (Intercept) 30.9    7.2  
 ## hp           0.0    0.0  
 ## disp         0.0    0.0  
-## gear        -0.7    1.8  
-## am          -4.5   10.5  
-## gear:am      2.0    2.7  
+## gear        -0.7    1.9  
+## am          -5.0   10.2  
+## gear:am      2.2    2.6  
 ## 
 ## Auxiliary parameter(s):
 ##       Median MAD_SD
@@ -323,10 +343,10 @@ Her kan vi se at vi har fått en koeffisient for hver av variablene, pluss $gear
 
 ```math
 
-Y=gear+gear:am + X +e = + Y = -0,6+2.1(-0.6*1) + X + e
+Y=gear+gear:am + X +e = + Y = -0,7+2.1(-0.7*1) + X + e
 
 ```
 
-altså at effekten av gear er -2.17. For en V motor må du istedet gange -0.6 med 0. Dette kan ofte være lettere å se med en graf:
+altså at effekten av gear er -2.17. For en V motor må du istedet gange -0.7 med 0. Dette kan ofte være lettere å se med en graf:
 
 ![](meme/interaksjon.png)

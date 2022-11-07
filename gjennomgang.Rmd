@@ -14,6 +14,9 @@ output:
 ```{r setup, include=FALSE}
 library(tidyverse)
 library(extrafont)
+library(rstanarm)
+library(modelsummary)
+models <- readRDS("meme/models.rds")
 #font_import()
 loadfonts(device = "win")
 knitr::opts_chunk$set(echo = TRUE)
@@ -128,7 +131,7 @@ ggplot(as_tibble(output), aes(value)) +
 
 ![](meme/reg.jpg)
 
-```{r, message=FALSE, warning=FALSE}
+```{r, message=FALSE, warning=FALSE, eval=FALSE}
 library(rstanarm)
 library(modelsummary)
 #Alle regresjonsmodellene vi kjører følger det samme mønsteret, modellfunksjonen (i.e. stan_glm), og så en formel ala Y ~ X, evt. Y ~ X1 + X2 + X3 + X1:X2....
@@ -141,6 +144,12 @@ mod3 <- stan_glm(mpg ~ hp + disp + gear, data = mtcars, refresh = 0)
 models <- list(mod1, mod2, mod3)
 
 modelsummary(models, statistic = "mad", title = "Linær regresjon, mpg som avhengig", output = "markdown")
+
+```
+
+```{r, echo=FALSE}
+
+modelsummary(models[1:3], statistic = "mad", title = "Linær regresjon, mpg som avhengig", output = "markdown")
 
 ```
 
@@ -200,20 +209,24 @@ ggplot(prediksjoner,
 
 Interaksjonseffekter, eller samspillseffekter, eller samspillsledd (kjært barn har mange navn..) brukes når vi tror at effekten av en variabel avhenger av verdien på en annen. Et eksempel kan være om vi mener at hvor stor effekten antall gir har på drivstoffeffektivitet vil avhengig av om det er en v- eller rekkemotor. For å undersøke dette kan vi se på regresjonsmodellen vi har over, og legge til et samspill mellom *hp* og *vs* (hvor 1 på siste betyr rekkemotor, og 0 v-motor).
 
-```{r}
+```{r, eval=FALSE}
 
 mod4 <- stan_glm(mpg ~ hp + disp + gear + am + gear*am, data = mtcars, refresh = 0)
 print(mod4)
+```
+
+```{r, echo=FALSE}
+print(models[4])
 ```
 
 Her kan vi se at vi har fått en koeffisient for hver av variablene, pluss $gear:am$ som viser samspillsleddet. Når vi nå skal tolke effekten av antall gir, må vi se den sammen med dette leddet. For en bil med rekkemottor vil effekten av antall gir da bli:
 
 ```{math}
 
-Y=gear+gear:am + X +e = + Y = -0,6+2.1(-0.6*1) + X + e
+Y=gear+gear:am + X +e = + Y = -0,7+2.1(-0.7*1) + X + e
 
 ```
 
-altså at effekten av gear er -2.17. For en V motor må du istedet gange -0.6 med 0. Dette kan ofte være lettere å se med en graf:
+altså at effekten av gear er -2.17. For en V motor må du istedet gange -0.7 med 0. Dette kan ofte være lettere å se med en graf:
 
 ![](meme/interaksjon.png)
