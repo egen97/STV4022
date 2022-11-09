@@ -136,7 +136,7 @@ sd(output)
 ```
 
 ```
-## [1] 1.053307
+## [1] 1.049151
 ```
 
 ```r
@@ -144,7 +144,7 @@ mean(output)
 ```
 
 ```
-## [1] 20.12326
+## [1] 20.10714
 ```
 
 ```r
@@ -233,7 +233,7 @@ Table: Linær regresjon, mpg som avhengig
 |WAIC        |  182.2  |  168.7  |  167.6  |
 |RMSE        |  3.74   |  2.98   |  2.84   |
 
-Tre modeller, med coeffisienten (median), og MAD_SD (i parantes under) i tabellen. Vi kan se at hestekrefter (hp) generelt fører til en lavere drivstoffeffektivitet, men dette virker ikke å være signifikant (standardavviket er nesten like stor som koeffisienten.) Når vi legger til flere variabler forandrer den seg veldig lite mellom modellene. Displacement, altså størrelse, ser også ut til å ha en negativ effekt, og har en signifikant effekt i modell 2 (koeffisienten er \>2x så står som MAD_SD/standardavviket). Det kan dermed virke som det har mer å si for drivstoffeffektiviteten enn hestekrefter alene. Når vi legger til antall gir, i model 3, er derimot ikke disp signifikant lenger.
+Tre modeller, med coeffisienten (median), og MAD_SD (i parantes under) i tabellen. Vi kan se at hestekrefter (hp) generelt fører til en lavere drivstoffeffektivitet, og standardavviket her er under halvparten så stort som koeffisienten (0.011\*2 = 0.22). Når vi legger til flere variabler forandrer den seg veldig lite mellom modellene. Displacement, altså størrelse, ser også ut til å ha en negativ effekt, og har en signifikant effekt i modell 2 (koeffisienten er \>2x så står som MAD_SD/standardavviket). Det kan dermed virke som det har mer å si for drivstoffeffektiviteten enn hestekrefter alene. Når vi legger til antall gir, i model 3, er derimot ikke disp signifikant lenger.
 
 For å gjøre en logistisk regresjon bruker vi pretty much akkurat den samme koden!
 
@@ -253,10 +253,10 @@ print(logit1)
 ##  predictors:   4
 ## ------
 ##             Median MAD_SD
-## (Intercept) -5.1    6.8  
+## (Intercept) -4.5    6.8  
 ## hp           0.0    0.0  
 ## disp         0.0    0.0  
-## gear        -2.0    1.7  
+## gear        -2.1    1.7  
 ## 
 ## ------
 ## * For help interpreting the printed output see ?print.stanreg
